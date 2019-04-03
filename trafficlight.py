@@ -16,13 +16,7 @@ state = {
 }
 
 @app.route('/recieve_data', methods=['POST','GET'])
-def generate_dummy_vehicle_data():
-	dat = {}
-	for i in range(1):
-		velocity = random.randint(1,101)
-		dat['velocity'] = velocity
-		for parent in state['parents']:
-			r = requests.post(parent, json=dat)
+
 
 
 # @app.route('/service_coordination/merge')

@@ -11,11 +11,11 @@ counter = Value('i', 0)
 app = Flask(__name__)
 
 state = {
-	'children'	: [],
+	'children'	: None,
 	'parents'	: ["http://127.0.0.1:5000/"],
-	'active_siblings'	: [],
-	'inactive_siblings'	: [],
-	'aspects'	: []
+	'active_siblings'	: None,
+	'inactive_siblings'	: None,
+	'aspects'	: None
 }
 
 def generate_dummy_vehicle_data(vehicles):
@@ -32,18 +32,18 @@ def generate_dummy_vehicle_data(vehicles):
 
 @app.route('/service_coordination/merge')
 def merge_request():
-	ip = request.remote_addr
-	if ip in state['parents']:
+	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
+	if url in state['parents']:
 		state['parents'] = requests.json['active_siblings']
-	elif ip in state['children']:
+	elif url in state['children']:
 		state['children'] = requests.json['active_siblings']
 
 @app.route('service_coordination/divide')
 def divide_request():
-	ip = request.remote_addr
-	if ip in state['parents']:
+	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
+	if url in state['parents']:
 		state['parents'] = requests.json['active_siblings']
-	elif ip in state['children']:
+	elif url in state['children']:
 		state['children'] = requests.json['active_siblings']
 	
 

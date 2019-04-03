@@ -8,13 +8,15 @@ from membrane_operations import *
 # counter = Value('i', 0)
 app = Flask(__name__)
 
+PORT = 5000
+
 initial_state = {
 	'children'	: [],
 	'parents'	: ["http://127.0.0.1:6000/"],
 	'active_siblings'	: [],
 	'inactive_siblings'	: ["http://127.0.0.1:5001/"],
 	'aspects'	: {
-		"request_count": Value('i', 0)
+		"request_count": 0
 	}
 }
 
@@ -22,11 +24,12 @@ state = initial_state
 
 @app.route('/recieve_data', methods=['POST','GET'])
 def recv_data():
-	with state['aspects']['request_count'].get_lock():
-		state['aspects']['request_count'].value += 1
-	if state['aspects']['request_count'].value > 200:
-		state = divide(state, 1)
-		state['aspects']['request_count'].value = 0
+	global state
+	
+	state['aspects']['request_count'] += 1
+	if state['aspects']['request_count'] > 200:
+		state = divide(state, 1, PORT)
+		state['aspects']['request_count'] = 0
 	data = request.json
 	if data['velocity'] > 60:
 		print("Speed of {} is too fast".format(data['velocity']))
@@ -34,23 +37,26 @@ def recv_data():
 		# r = requests.post(state['parents'][parent]+'recieve_data', json=dat)
 	else:
 		print("Good speed of {}".format(data['velocity']))
-	print("Counter: ", str(state['aspects']['request_count'].value))
+	print("Counter: ", str(state['aspects']['request_count']))
 	return 'Velocity : ' + str(data['velocity'])
 
 
-@app.route('/service_coordination/merge')
+@app.route('/service_coordination/merge', methods=['POST','GET'])
 def merge_request():
-	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
+	global state
+	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
 	if url in state['parents']:
 		state['parents'] = requests.json['active_siblings']
 	elif url in state['children']:
 		state['children'] = requests.json['active_siblings']
 	elif url in state['active_siblings']:
 		state = initial_state
+	return 'Ack'
 
-@app.route('/service_coordination/divide')
+@app.route('/service_coordination/divide', methods=['POST','GET'])
 def divide_request():
-	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
+	global state
+	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
 	if url in state['parents']:
 		state['parents'] = requests.json['active_siblings']
 	elif url in state['children']:
@@ -58,10 +64,12 @@ def divide_request():
 	elif url in state['active_siblings']:
 		state = requests.json
 		state['aspects']['request_count'].value = 0
+	return 'Ack'
 
-@app.route('/service_coordination/transform')
+@app.route('/service_coordination/transform', methods=['POST','GET'])
 def transform_request():
-	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
+	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
+	return 'Ack'
 
 if __name__ == '__main__':
-	app.run(debug=True,host='0.0.0.0',port=5000)
+	app.run(debug=True,host='0.0.0.0',port=PORT)

@@ -23,6 +23,13 @@ def recv_data():
 	# print(data['ve'])
 	return 'Velocity : ' + str(data['velocity'])
 
+@app.route('/service_coordination/divide', methods=['POST','GET'])
+def divide_request():
+	# global state
+	# #url = 'http://' + request.remote_addr + ':' + str(request.environ.get('REMOTE_PORT')) + '/'
+	# state['parents'] = requests.json['active_siblings']
+	# print(state['parents'])
+	return 'Ack'
 
 if __name__ == '__main__':
 	app.run(debug=True,port=6000)

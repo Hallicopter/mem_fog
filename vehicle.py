@@ -23,6 +23,7 @@ def generate_dummy_vehicle_data(vehicles):
 	for i in range(100):
 		time.sleep(1)
 		for v in range(vehicles):
+			print(state['parents'])
 			velocity = random.randint(1,101)
 			dat['velocity'] = velocity
 			parent = random.randint(0, len(state['parents'])-1)
@@ -30,21 +31,19 @@ def generate_dummy_vehicle_data(vehicles):
 
 
 
-@app.route('/service_coordination/merge')
+@app.route('/service_coordination/merge', methods=['POST','GET'])
 def merge_request():
-	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
-	if url in state['parents']:
-		state['parents'] = requests.json['active_siblings']
-	elif url in state['children']:
-		state['children'] = requests.json['active_siblings']
+	global state
+	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
+	state['children'] = requests.json['active_siblings']
+	return 'Ack'
 
-@app.route('service_coordination/divide')
+@app.route('/service_coordination/divide', methods=['POST','GET'])
 def divide_request():
-	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
-	if url in state['parents']:
-		state['parents'] = requests.json['active_siblings']
-	elif url in state['children']:
-		state['children'] = requests.json['active_siblings']
+	global state
+	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
+	state['parents'] = requests.json['active_siblings']
+	return 'Ack'
 	
 
 if __name__ == '__main__':

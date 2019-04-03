@@ -18,7 +18,10 @@ state = {
 	'aspects'	: None
 }
 
-def generate_dummy_vehicle_data(vehicles):
+@app.route('/generate_dummy_data', methods=['POST','GET'])
+def generate_dummy_vehicle_data():
+	print(request.remote_addr)
+	vehicles = int(request.get_data())
 	dat = {}
 	for i in range(100):
 		time.sleep(1)
@@ -28,8 +31,7 @@ def generate_dummy_vehicle_data(vehicles):
 			dat['velocity'] = velocity
 			parent = random.randint(0, len(state['parents'])-1)
 			r = requests.post(state['parents'][parent]+'recieve_data', json=dat)
-
-
+	return 'Ack'
 
 @app.route('/service_coordination/merge', methods=['POST','GET'])
 def merge_request():
@@ -47,9 +49,7 @@ def divide_request():
 	
 
 if __name__ == '__main__':
-	vehicles = input("Number of vehicles: ")
 	app.run(debug=True,host='0.0.0.0',port=4000)
-	generate_dummy_vehicle_data(int(vehicles))
 	
 
 

@@ -8,7 +8,7 @@ from membrane_operations import *
 # counter = Value('i', 0)
 app = Flask(__name__)
 
-state = {
+initial_state = {
 	'children'	: [],
 	'parents'	: ["http://127.0.0.1:6000/"],
 	'active_siblings'	: ["http://127.0.0.1:5001/"],
@@ -18,12 +18,15 @@ state = {
 	}
 }
 
+state = initial_state
+
 @app.route('/recieve_data', methods=['POST','GET'])
 def recv_data():
 	with state['aspects']['request_count'].get_lock():
 		state['aspects']['request_count'].value += 1
 	if state['aspects']['request_count'].value > 10:
 		state = divide(state, 1)
+		state['aspects']['request_count'].value = 0
 	data = request.json
 	if data['velocity'] > 60:
 		print("Speed of {} is too fast".format(data['velocity']))
@@ -37,22 +40,28 @@ def recv_data():
 
 @app.route('/service_coordination/merge')
 def merge_request():
-	ip = request.remote_addr
-	if ip in state['parents']:
+	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
+	if url in state['parents']:
 		state['parents'] = requests.json['active_siblings']
-	elif ip in state['children']:
+	elif url in state['children']:
 		state['children'] = requests.json['active_siblings']
+	elif url in state['active_siblings']:
+		state = initial_state
 
-@app.route('service_coordination/divide')
+@app.route('/service_coordination/divide')
 def divide_request():
-	ip = request.remote_addr
-	if ip in state['parents']:
+	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
+	if url in state['parents']:
 		state['parents'] = requests.json['active_siblings']
-	elif ip in state['children']:
+	elif url in state['children']:
 		state['children'] = requests.json['active_siblings']
+	elif url in state['active_siblings']:
+		state = requests.json
+		state['aspects']['request_count'].value = 0
 
-
-
+@app.route('/service_coordination/transform')
+def transform_request():
+	url = 'http://' + request.remote_addr + '/' + request.environ.get('REMOTE_PORT') + '/'
 
 if __name__ == '__main__':
 	app.run(debug=True,host='0.0.0.0',port=5001)

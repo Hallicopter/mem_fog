@@ -6,14 +6,14 @@ def transform(state, aspect_name, new_value):
 	state['aspects'][aspect_name] = new_value
 
 	#send to all siblings, parents, and children
-	# active_siblings 	= state['active_siblings']
-	# parents 			= state['parents']
-	# children 			= state['children']
-	# payload				= state['aspects']
-	# for url in active_siblings + children + parents:
-	# 	r = requests.post(url + 'service_coordination/transform', json=payload)
-	# 	if not r:
-	# 		print("Transform broadcast not sent to {}".format(url))
+	active_siblings 	= state['active_siblings']
+	parents 			= state['parents']
+	children 			= state['children']
+	payload				= state['aspects']
+	for url in active_siblings + children + parents:
+		r = requests.post(url + 'service_coordination/transform', json=payload)
+		if not r:
+			print("Transform broadcast not sent to {}".format(url))
 
 	return state
 
@@ -23,8 +23,10 @@ def divide(state, number_of_additions):
 	for sib in state['inactive_siblings'][:number_of_additions]:
 		siblings_to_add += sib
 
+	payload = state
+
 	for s_url in siblings_to_add:
-		r = requests.get(s_url + 'service_coordination/divide')
+		r = requests.post(s_url + 'service_coordination/divide', json=payload)
 		if r:
 			state['inactive_siblings'].remove(s_url)
 			state['active_siblings'] += s_url
@@ -49,7 +51,7 @@ def merge(state, number_of_deletions):
 	for s_url in siblings_to_del:
 		r = requests.get(s_url + 'service_coordination/merge')
 		if not r:
-			print("Merge broadcast was not sent to {}".format(s_))
+			print("Merge broadcast was not sent to {}".format(s_url))
 		state['active_siblings'].remove()
 		state['inactive_siblings'] += s_url
 
@@ -58,7 +60,7 @@ def merge(state, number_of_deletions):
 	payload = {'active_siblings':state['active_siblings']}
 	for url in parents + siblings + children:
 		r = requests.post(url + 'service_coordination/merge', json=payload)
-		if not rj:
+		if not r:
 			print("Transform broadcast not sent to {}".format(url))
 
 	return state

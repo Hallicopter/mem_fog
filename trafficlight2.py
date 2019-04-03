@@ -3,15 +3,15 @@ from flask import request
 from multiprocessing import Value
 import random
 import requests
-
+from membrane_operations import *
 
 # counter = Value('i', 0)
 app = Flask(__name__)
 
 state = {
 	'children'	: [],
-	'parents'	: ["http://127.0.0.1:8000/"],
-	'active_siblings'	: [],
+	'parents'	: ["http://127.0.0.1:6000/"],
+	'active_siblings'	: ["http://127.0.0.1:5001/"],
 	'inactive_siblings'	: [],
 	'aspects'	: {
 		"request_count": Value('i', 0)
@@ -28,7 +28,7 @@ def recv_data():
 	if data['velocity'] > 60:
 		print("Speed of {} is too fast".format(data['velocity']))
 		parent = random.randint(0, len(state['parents'])-1)
-		r = requests.post(state['parents'][parent]+'recieve_data', json=dat)
+		# r = requests.post(state['parents'][parent]+'recieve_data', json=dat)
 	else:
 		print("Good speed of {}".format(data['velocity']))
 	print("Counter: ", str(state['aspects']['request_count'].value))
@@ -55,4 +55,4 @@ def divide_request():
 
 
 if __name__ == '__main__':
-	app.run(debug=True,host='0.0.0.0',port=5000)
+	app.run(debug=True,host='0.0.0.0',port=5001)

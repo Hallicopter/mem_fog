@@ -24,7 +24,7 @@ def divide(state, number_of_additions):
 		siblings_to_add += sib
 
 	for s_url in siblings_to_add:
-		r = requests.get(s_url + 'service_coordination/split')
+		r = requests.get(s_url + 'service_coordination/divide')
 		if r:
 			state['inactive_siblings'].remove(s_url)
 			state['active_siblings'] += s_url
@@ -34,7 +34,7 @@ def divide(state, number_of_additions):
 	parents				= state['parents']
 	payload				= {'active_siblings':state['active_siblings']}
 	for url in children + parents:
-		r = requests.post(url + 'service_coordination/split', json=payload)
+		r = requests.post(url + 'service_coordination/divide', json=payload)
 		if not r:
 			print("Transform broadcast not sent to {}".format(url))
 
@@ -60,3 +60,5 @@ def merge(state, number_of_deletions):
 		r = requests.post(url + 'service_coordination/merge', json=payload)
 		if not rj:
 			print("Transform broadcast not sent to {}".format(url))
+
+	return state

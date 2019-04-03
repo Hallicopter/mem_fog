@@ -4,6 +4,7 @@ from multiprocessing import Value
 import random
 import requests
 import time
+from membrane_operations import *
 
 
 counter = Value('i', 0)
@@ -12,7 +13,8 @@ app = Flask(__name__)
 state = {
 	'children'	: [],
 	'parents'	: ["http://127.0.0.1:5000/"],
-	'siblings'	: [],
+	'active_siblings'	: [],
+	'inactive_siblings'	: [],
 	'aspects'	: []
 }
 
@@ -28,13 +30,26 @@ def generate_dummy_vehicle_data(vehicles):
 
 
 
-# @app.route('/service_coordination/merge')
-# def merge_request():
+@app.route('/service_coordination/merge')
+def merge_request():
+	ip = request.remote_addr
+	if ip in state['parents']:
+		state['parents'] = requests.json['active_siblings']
+	elif ip in state['children']:
+		state['children'] = requests.json['active_siblings']
+
+@app.route('service_coordination/divide')
+def divide_request():
+	ip = request.remote_addr
+	if ip in state['parents']:
+		state['parents'] = requests.json['active_siblings']
+	elif ip in state['children']:
+		state['children'] = requests.json['active_siblings']
 	
 
 if __name__ == '__main__':
 	vehicles = input("Number of vehicles: ")
 	generate_dummy_vehicle_data(int(vehicles))
-	app.run(debug=True,host='0.0.0.0',port=6000)
+	app.run(debug=True,host='0.0.0.0',port=4000)
 
 

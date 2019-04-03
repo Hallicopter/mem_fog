@@ -48,7 +48,8 @@ def divide_request():
 
 if __name__ == '__main__':
 	vehicles = input("Number of vehicles: ")
-	generate_dummy_vehicle_data(int(vehicles))
 	app.run(debug=True,host='0.0.0.0',port=4000)
+	generate_dummy_vehicle_data(int(vehicles))
+	
 
 

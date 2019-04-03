@@ -29,8 +29,10 @@ def divide(state, number_of_additions, port):
 		r = requests.post(s_url + 'service_coordination/divide', json=payload, data=str(port))
 		if r:
 			state['inactive_siblings'].remove(s_url)
-			state['active_siblings'] += s_url
+			state['active_siblings'].append(s_url)
 
+	print(state['inactive_siblings'])
+	print(state['active_siblings'])
 	#send to all children and parents
 	children			= state['children']
 	parents				= state['parents']

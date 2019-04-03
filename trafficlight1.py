@@ -11,7 +11,7 @@ app = Flask(__name__)
 PORT = 5000
 
 initial_state = {
-	'children'	: [],
+	'children'	: ["http://127.0.0.1:4000/"],
 	'parents'	: ["http://127.0.0.1:6000/"],
 	'active_siblings'	: [],
 	'inactive_siblings'	: ["http://127.0.0.1:5001/"],

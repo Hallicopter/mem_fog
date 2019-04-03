@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from multiprocessing import Value
+import requests
 
 counter = Value('i', 0)
 app = Flask(__name__)
@@ -12,13 +13,14 @@ state = {
 	'aspects'	: []
 }
 
-@app.route('/recieve_data')
+@app.route('/recieve_data', methods=['POST','GET'])
 def recv_data():
 	with counter.get_lock():
 		counter.value += 1
-	data = request.args.get('params')
-	print(data)
+	data = request.json
+	# print(data['ve'])
+	return 'Velocity : ' + str(data['velocity'])
 
 
 if __name__ == '__main__':
-	app.run(debug=True,host='0.0.0.0',port=8000)
+	app.run(debug=True,port=8000)

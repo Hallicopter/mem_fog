@@ -56,7 +56,7 @@ def merge_request():
 def divide_request():
 	global state
 	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
-	print(url)
+	print("This " + url)
 	if url in state['parents']:
 		state['parents'] = requests.json['active_siblings']
 	elif url in state['children']:
@@ -73,4 +73,4 @@ def transform_request():
 	return 'Ack'
 
 if __name__ == '__main__':
-	app.run(debug=True,host='0.0.0.0',port=PORT)
+	app.run(debug=True,port=PORT)

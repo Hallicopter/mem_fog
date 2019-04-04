@@ -11,11 +11,11 @@ counter = Value('i', 0)
 app = Flask(__name__)
 
 state = {
-	'children'	: None,
+	'children'	: [],
 	'parents'	: ["http://127.0.0.1:5000/"],
-	'active_siblings'	: None,
-	'inactive_siblings'	: None,
-	'aspects'	: None
+	'active_siblings'	: [],
+	'inactive_siblings'	: [],
+	'aspects'	: []
 }
 
 @app.route('/generate_dummy_data', methods=['POST','GET'])
@@ -37,14 +37,16 @@ def generate_dummy_vehicle_data():
 def merge_request():
 	global state
 	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
-	state['children'] = requests.json['active_siblings']
+	state['children'] = request.json['active_siblings']
 	return 'Ack'
 
 @app.route('/service_coordination/divide', methods=['POST','GET'])
 def divide_request():
-	global state
-	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
-	state['parents'] = requests.json['active_siblings']
+	# global state
+	# url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
+	# print(request.json)
+	# state['parents'] = request.json['active_siblings']
+	state['parents'].append('http://127.0.0.1:5001/')
 	return 'Ack'
 	
 

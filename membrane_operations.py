@@ -31,23 +31,31 @@ def divide(state, number_of_additions, port):
 			state['inactive_siblings'].remove(s_url)
 			state['active_siblings'].append(s_url)
 
-	print(state['inactive_siblings'])
-	print(state['active_siblings'])
+	# print(state['inactive_siblings'])
+	# print(state['active_siblings'])
 	#send to all children and parents
 	children			= state['children']
 	parents				= state['parents']
 	payload				= {'active_siblings':state['active_siblings']}
 
-	print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2')
-	print(children)
-	print(parents)
-	print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+	print("*****************************************")
+
+	print(payload['active_siblings'])
+
+	print("******************************************")
+
+	# print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2')
+	# print(children)
+	# print(parents)
+	# print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 
 	
 	for url in children + parents:
-		r = requests.post(url + 'service_coordination/divide', json=payload, data=str(port))
+		#r = requests.post(url + 'service_coordination/divide', json=payload, data=str(port))
+		#print(payload)
+		r = requests.get(url + 'service_coordination/divide')
 		if not r:
-			print("Transform broadcast not sent to {}".format(url))
+			print("Divide broadcast not sent to {} with error code = {}".format(url,r))
 
 	return state
 
@@ -70,6 +78,6 @@ def merge(state, number_of_deletions, port):
 	for url in parents + siblings + children:
 		r = requests.post(url + 'service_coordination/merge', json=payload, data=port)
 		if not r:
-			print("Transform broadcast not sent to {}".format(url))
+			print("Merge broadcast not sent to {}".format(url))
 
 	return state

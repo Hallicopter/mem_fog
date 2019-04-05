@@ -42,11 +42,12 @@ def merge_request():
 
 @app.route('/service_coordination/divide', methods=['POST','GET'])
 def divide_request():
-	# global state
-	# url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
-	# print(request.json)
-	# state['parents'] = request.json['active_siblings']
-	state['parents'].append('http://127.0.0.1:5001/')
+	global state
+	url = 'http://' + request.remote_addr + ':' + str(5000) + '/'
+	print(request.json)
+	if url in state['parents']:
+		state['parents'] = request.json['active_siblings']
+	#state['parents'].append('http://127.0.0.1:5001/')
 	return 'Ack'
 	
 

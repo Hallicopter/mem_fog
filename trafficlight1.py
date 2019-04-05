@@ -13,7 +13,7 @@ PORT = 5000
 initial_state = {
 	'children'	: ["http://127.0.0.1:4000/"],
 	'parents'	: ["http://127.0.0.1:6000/"],
-	'active_siblings'	: [],
+	'active_siblings'	: ["http://127.0.0.1:5000/"],
 	'inactive_siblings'	: ["http://127.0.0.1:5001/"],
 	'aspects'	: {
 		"request_count": 0

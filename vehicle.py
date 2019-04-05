@@ -37,7 +37,8 @@ def generate_dummy_vehicle_data():
 def merge_request():
 	global state
 	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
-	state['children'] = request.json['active_siblings']
+	if url in state['parents']:
+		state['children'] = request.json['active_siblings']
 	return 'Ack'
 
 @app.route('/service_coordination/divide', methods=['POST','GET'])
@@ -47,7 +48,6 @@ def divide_request():
 	print(request.json)
 	if url in state['parents']:
 		state['parents'] = request.json['active_siblings']
-	#state['parents'].append('http://127.0.0.1:5001/')
 	return 'Ack'
 	
 

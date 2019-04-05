@@ -33,7 +33,7 @@ def recv_data():
 	if data['velocity'] > 60:
 		print("Speed of {} is too fast".format(data['velocity']))
 		parent = random.randint(0, len(state['parents'])-1)
-		# r = requests.post(state['parents'][parent]+'recieve_data', json=dat)
+		r = requests.post(state['parents'][parent]+'recieve_data', json=data)
 	else:
 		print("Good speed of {}".format(data['velocity']))
 	print("Counter: ", str(state['aspects']['request_count']))

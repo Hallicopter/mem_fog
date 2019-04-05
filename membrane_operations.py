@@ -24,37 +24,18 @@ def divide(state, number_of_additions, port):
 		siblings_to_add.append(sib)
 	
 	payload = state
-	# print(payload)
 	for s_url in siblings_to_add:
 		r = requests.post(s_url + 'service_coordination/divide', json=payload)
 		if r:
-			print("SUCCESSSSS!!!!")
 			state['inactive_siblings'].remove(s_url)
 			state['active_siblings'].append(s_url)
 
-	# print(state['inactive_siblings'])
-	# print(state['active_siblings'])
-	#send to all children and parents
 	children			= state['children']
 	parents				= state['parents']
 	payload				= {'active_siblings':state['active_siblings']}
-
-	print("*****************************************")
-
-	print(payload['active_siblings'])
-
-	print("******************************************")
-
-	# print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2')
-	# print(children)
-	# print(parents)
-	# print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-
 	
 	for url in children + parents:
 		r = requests.post(url + 'service_coordination/divide', json=payload)
-		#print(payload)
-		#r = requests.get(url + 'service_coordination/divide')
 		if not r:
 			print("Divide broadcast not sent to {} with error code = {}".format(url,r))
 

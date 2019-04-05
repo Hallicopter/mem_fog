@@ -27,8 +27,9 @@ def recv_data():
 	global state
 	
 	state['aspects']['request_count'] += 1
-	if state['aspects']['request_count'] > 200:
+	if state['aspects']['request_count'] > 50:
 		state = divide(state, 1, PORT)
+		print("DIVIDE HIT!")
 		state['aspects']['request_count'] = 0
 	data = request.json
 	if data['velocity'] > 60:

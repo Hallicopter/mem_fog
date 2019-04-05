@@ -26,8 +26,9 @@ state = initial_state
 def recv_data():
 	global state	
 	state['aspects']['request_count']+= 1
-	if state['aspects']['request_count']> 200:
+	if state['aspects']['request_count'] > 50:
 		state = divide(state, 1, PORT)
+		print("DIVIDE HIT")
 		state['aspects']['request_count'] = 0
 	data = request.json
 	if data['velocity'] > 60:
@@ -56,7 +57,7 @@ def merge_request():
 def divide_request():
 	global state
 	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
-	print("This " + url)
+	#print("This " + url)
 	if url in state['parents']:
 		state['parents'] = requests.json['active_siblings']
 	elif url in state['children']:

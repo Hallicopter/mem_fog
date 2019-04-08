@@ -36,7 +36,7 @@ def generate_dummy_vehicle_data():
 @app.route('/service_coordination/merge', methods=['POST','GET'])
 def merge_request():
 	global state
-	url = 'http://' + request.remote_addr + ':' + str(request.get_data()) + '/'
+	url = 'http://' + request.remote_addr + ':' + str(request.port) + '/'
 	if url in state['parents']:
 		state['children'] = request.json['active_siblings']
 	return 'Ack'
@@ -44,7 +44,7 @@ def merge_request():
 @app.route('/service_coordination/divide', methods=['POST','GET'])
 def divide_request():
 	global state
-	url = 'http://' + request.remote_addr + ':' + str(5000) + '/'
+	url = 'http://' + request.remote_addr + ':' + str(request.port) + '/'
 	print(request.json)
 	if url in state['parents']:
 		state['parents'] = request.json['active_siblings']

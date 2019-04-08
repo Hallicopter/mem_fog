@@ -35,7 +35,7 @@ def divide(state, number_of_additions, port):
 	payload				= {'active_siblings':state['active_siblings']}
 	
 	for url in children + parents:
-		r = requests.post(url + 'service_coordination/divide', json=payload)
+		r = requests.post(url + 'service_coordination/divide', json=payload, port_no=port)
 		if not r:
 			print("Divide broadcast not sent to {} with error code = {}".format(url,r))
 

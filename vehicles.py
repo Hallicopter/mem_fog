@@ -28,15 +28,15 @@ class Vehicle:
 			json 			= {'id':self.id, 'speed':speed}
 			ret 			= requests.post(parents[parent_index] + 'recieve_data', json=json)
 			if ret:
-				print(self.id + " sent data to " + parents[parent_index])
+				print("{} successfully sent data to {}".format(self.id, parents[parent_index]))
 			else:
-				print(self.id + " couldn't send data to " + parents[parent_index])
+				print("{} counldn't send data to {}".format(self.id, parents[parent_index]))
 
 
 @app.route('/simulate_vehicles', methods=['GET', 'POST'])
 def send_data():
 	for i in range(int(request.data)):
-		Vehicle(i).send_data();
+		Vehicle(i).send_data()
 	return ACK
 
 @app.route('/service_coordination/notify_divide', methods=['GET','POST'])

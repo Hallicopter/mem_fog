@@ -41,8 +41,7 @@ class TrafficLight(Flask):
 	def __init__(self, name, port, state, speed_limit):
 		self.port 			= port
 		self.state 			= state
-		self.speed_limit 	= speed_limit
-		# call the super class __init__
+		self.speed_limit 	= speed_limits
 		super().__init__(self, name)
 		# register routes
 		for route, fn in registered_routes.items():

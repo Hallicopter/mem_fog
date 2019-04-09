@@ -1,6 +1,8 @@
 from trafficlight import TrafficLight
 
-state = {
+PORT 		= 5001
+SPEED_LIMIT = 60 
+STATE = {
 	'active_siblings' 	: ['http://127.0.0.1:5000/'],
 	'inactive_siblings' : ['http://127.0.0.1:5001/'],
 	'parents'			: ['http://127.0.0.1:6000/'],
@@ -10,5 +12,7 @@ state = {
 						}
 }
 
+app = TrafficLight(__name__, PORT, STATE, SPEED_LIMIT)
+
 if __name__ == '__main__':
-	t1 = TrafficLight(5001, state, 60)
+	app.run(debug=True, port=PORT)

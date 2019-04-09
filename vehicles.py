@@ -26,15 +26,16 @@ class Vehicle:
 			speed 			= random.randint(1, 101) 				# select a random speed
 			parent_index 	= random.randint(0, len(parents)-1) 	# select a parent out of the available with eq probability
 			json 			= {'id':self.id, 'speed':speed}
-			#ret 			= requests.post(parents[parent_index] + 'recieve_data', json=json)
+			ret 			= requests.post(parents[parent_index] + 'recv_data/', json=json)
 			
-			url = parents[parent_index] #+ 'recieve_data'
-			print(url)
-			ret = requests.get(url)
+			# url = parents[parent_index] #+ 'recieve_data'
+			# print(url)
+			# ret = requests.get(url)
+
 			if ret:
-				print("{} successfully sent data to {}".format(self.id, parents[parent_index]))
+				print("Vehicle {} successfully sent data to {}".format(self.id, parents[parent_index]))
 			else:
-				print("{} counldn't send data to {}".format(self.id, parents[parent_index]))
+				print("Vehicle {} counldn't send data to {}".format(self.id, parents[parent_index]))
 
 
 @app.route('/simulate_vehicles', methods=['GET', 'POST'])

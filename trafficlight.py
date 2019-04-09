@@ -3,44 +3,46 @@ from flask import request
 from multiprocessing import Value
 import random
 import requests
+from flask import Blueprint
+from flask.ext.classy import FlaskView, route
 
 
-class TrafficLight:
-
-	def __init__(self, port, state):
-		self.port = port
-		self.state = state
-		app = Flask(__name__)
-		app.run(debug=True,port=self.port)
+class TrafficLight(FlaskView):
+	def __init__(self, port, state, speedthresh):
+		self.port 			= port
+		self.state 			= state
+		self.speedthresh 	= speedthresh
 		
-		@app.route('/recieve_data', methods=['POST','GET'])
-		def recv_data():
-
-			self.state['aspects']['request_count'] += 1
-			if self.state['aspects']['request_count'].value > 10:
-				self.state = self.divide(1)
-
-			data = request.json
-			if data['speed'] > 60:
-				print("Speed of {} is too fast".format(data['speed']))
-				parent = random.randint(0, len(self.state['parents'])-1)
-				r = requests.post(self.state['parents'][parent]+'recieve_data', json=dat)
-			else:
-				print("Good speed of {}".format(data['speed']))
-			print("Counter: ", str(self.state['aspects']['request_count'].value))
-			return 'speed : ' + str(data['speed'])
-
-		@app.route('/service_coordination/notify_divide')
-		def divide_request():
-			url = 'http://' + request.remote_addr + ':' + request.json['port'] + '/'
-			if url in self.state['parents']:
-				self.state['parents'] = requests.json['active_siblings']
-			elif url in self.state['children']:
-				self.state['children'] = requests.json['active_siblings']
-			elif url in self.state['active_siblings']:
-				self.state = requests.json
-				self.state['aspects']['request_count'].value = 0
-			return 'Ack'
+		
+	@route('/word_bacon/') #<--- Adding route
+	def random(self):
+		return 'not bad'
+	
+	@route('/recieve_data', methods=['POST','GET'])
+	def recv_data():
+		self.state['aspects']['request_count'] += 1
+		if self.state['aspects']['request_count'].value > 10:
+			self.state = self.divide(1)
+		data = request.json
+		if data['speed'] > self.speedthresh:
+			print("Speed of {} is too fast".format(data['speed']))
+			parent 	= random.randint(0, len(self.state['parents'])-1)
+			r 		= requests.post(self.state['parents'][parent]+'recieve_data', json=dat)
+		else:
+			print("Good speed of {}".format(data['speed']))
+		print("Counter: ", str(self.state['aspects']['request_count'].value))
+		return 'speed : ' + str(data['speed'])
+	@route('/service_coordination/notify_divide')
+	def divide_request():
+		url = 'http://' + request.remote_addr + ':' + request.json['port'] + '/'
+		if url in self.state['parents']:
+			self.state['parents'] = requests.json['active_siblings']
+		elif url in self.state['children']:
+			self.state['children'] = requests.json['active_siblings']
+		elif url in self.state['active_siblings']:
+			self.state = requests.json
+			self.state['aspects']['request_count'].value = 0
+		return 'Ack'
 
 
 	def divide(number_of_additions, port):
@@ -68,8 +70,31 @@ class TrafficLight:
 		return state		
 
 	
+'''
+state = {
+	'active_siblings' 	: []
+	'inactive_siblings' : []
+	'parents'			: []
+	'children'			: []
+	'aspects'			: {
+							'port':'5000'
+						}
+}
+'''
+state = {
+	'active_siblings' 	: [],
+	'inactive_siblings' : [],
+	'parents'			: [],
+	'children'			: [],
+	'aspects'			: {
+							'port':'5000'
+						}
+}
 
-# counter = Value('i', 0)
+app = Flask(__name__)
+TrafficLight(5000, state, 60).register(app)
 
 if __name__ == '__main__':
-	t1 = TrafficLight(5000)
+	print("Gud1")
+	app.run(debug=True,port=self.port)
+	t1 = TrafficLight(5000, state, 60)

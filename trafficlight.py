@@ -44,6 +44,7 @@ class TrafficLight(Flask):
 		self.port 			= port
 		self.state 			= state
 		self.speed_limit 	= speed_limit
+		self.vehicle_set	= set()
 		Flask.__init__(self, name)
 		# register routes
 		for route, fn in registered_routes.items():
@@ -56,6 +57,9 @@ class TrafficLight(Flask):
 			Execute the divide operation is of our coordination model
 		"""
 		
+		# keeps track of number of messages sent
+		no_of_messages 		= 0
+
 		# list all the siblings to activate	
 		siblings_to_add 	= []
 		for sib in self.state['inactive_siblings'][:number_of_additions]:
@@ -67,21 +71,41 @@ class TrafficLight(Flask):
 			ret = requests.get(s_url + 'service_coordination/notify_divide', 
 								params={'json':json.dumps(payload)})
 			if ret:
+				# updates the message count
+				no_of_messages += 1
 				# update state json
 				self.state['inactive_siblings'].remove(s_url)
 				self.state['active_siblings'].append(s_url)
 
 		children			= self.state['children']
 		parents				= self.state['parents']
+
 		payload				= {'active_siblings':self.state['active_siblings'],
 								'port':self.port}
 
-		# notify the divide operation to all parents and children
-		for url in children + parents:
+		# notify the divide operation to parent
+		for url in parents:
 			ret = requests.get(url + 'service_coordination/notify_divide', 
 								params={'json':json.dumps(payload)})
 			if not ret:
 				print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
+			else:
+				# updates the message count
+				no_of_messages += 1
+
+		# notify the divide operation to children
+		for url in children:
+			for id in self.vehicle_set:
+				ret = requests.get(url + 'service_coordination/notify_divide',
+									params={'json':json.dumps(payload)})
+				if not ret:
+					print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
+				else:
+					# updates the message count
+					no_of_messages += 1
+
+		return no_of_messages
+
 		
 	@register_route('/recv_data/')
 	def recv_data(self):
@@ -90,16 +114,24 @@ class TrafficLight(Flask):
 		"""
 		self.state['aspects']['request_count'] += 1
 
+		
 		# call divide if threshold has been reached
 		if self.state['aspects']['request_count'] > THRESHOLD_VALUE:
-			self.divide(1)
-			f = open("logs.txt", "a")
-			f.write(str(time.time()))
-			f.close()
-			self.state['aspects']['request_count']=0
+			time_before_division 					= time.time()
+			no_of_messages 							= self.divide(1)	
+			self.vehicle_set 						= set()
+			self.state['aspects']['request_count']	= 0
+			time_after_division 					= time.time()
+			elapsed_time 							= time_after_division - time_before_division
 
+			# logs information into file
+			f = open("logs.txt", "a")
+			f.write("Elapsed time = "+str(elapsed_time) +
+					 "\nNumber of messages = " + str(no_of_messages))
+			f.close()
 
 		payload = json.loads(request.args['json'])
+		self.vehicle_set.add(payload['id'])
 
 		# if vehicle is speeding, notify the authorities
 		if payload['speed'] > self.speed_limit:

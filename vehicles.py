@@ -6,7 +6,7 @@ import requests # send http requests
 import time		# time stamp and sleep
 import json
 
-SLEEP_TIME 	= 0.1
+SLEEP_TIME 	= 0.5
 app 		= Flask(__name__)
 PORT 		= 4000
 parents 	= ['http://127.0.0.1:5000/']

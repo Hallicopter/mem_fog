@@ -40,8 +40,8 @@ class Vehicle:
 @app.route('/simulate_vehicles', methods=['GET','POST'])
 def send_data():
 	for i in range(100):
-		for i in range(int(request.data)):
-			Vehicle(i)
+		rand_vehicle_id = random.randint(0, int(request.data)-1) 
+		Vehicle(rand_vehicle_id)
 	return ACK
 
 @app.route('/service_coordination/notify_divide')

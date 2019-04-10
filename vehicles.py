@@ -48,8 +48,7 @@ def get_divide_notification():
 	global parents
 	payload = json.loads(request.args['json'])
 	parents = payload['active_siblings']
-	#id 		= payload['id']
-	return ACK + ' id'
+	return ACK
 
 if __name__ == '__main__':
 	app.run(debug=True, port=PORT)

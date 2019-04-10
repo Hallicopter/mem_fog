@@ -5,8 +5,10 @@ import random						# generate random data for speed
 import requests						# send http requests
 import json
 import time
+import csv							# log data
 
-THRESHOLD_VALUE = 50 # point at which load balancing is required
+THRESHOLD_VALUE = 50 		# point at which load balancing is required
+LOG_FILE_NAME	= "log.csv"
 
 ACK 			= "ACK"
 
@@ -51,6 +53,10 @@ class TrafficLight(Flask):
 			partial_fn = partial(fn, self)
 			partial_fn.__name__ = fn.__name__
 			self.route(route)(partial_fn)
+
+		with open(LOG_FILE_NAME, mode='w') as csv_file:
+			fieldnames 		= ['elapsed_time', 'no_of_messages']
+			self.writer		= csv.DictWriter(csv_file, fieldnames=fieldnames)
 
 	def divide(self, number_of_additions):
 		"""
@@ -114,7 +120,6 @@ class TrafficLight(Flask):
 		"""
 		self.state['aspects']['request_count'] += 1
 
-		
 		# call divide if threshold has been reached
 		if self.state['aspects']['request_count'] > THRESHOLD_VALUE:
 			time_before_division 					= time.time()
@@ -125,10 +130,8 @@ class TrafficLight(Flask):
 			elapsed_time 							= time_after_division - time_before_division
 
 			# logs information into file
-			f = open("logs.txt", "a")
-			f.write("Elapsed time = "+str(elapsed_time) +
-					 "\nNumber of messages = " + str(no_of_messages))
-			f.close()
+			self.writer.writeheader()
+			self.writer.writerow({'elapsed_time':elapsed_time,'no_of_messages':no_of_messages})
 
 		payload = json.loads(request.args['json'])
 		self.vehicle_set.add(payload['id'])

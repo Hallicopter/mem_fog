@@ -4,6 +4,7 @@ from functools import partial		# for registering routes
 import random						# generate random data for speed
 import requests						# send http requests
 import json
+import time
 
 THRESHOLD_VALUE = 50 # point at which load balancing is required
 
@@ -94,6 +95,9 @@ class TrafficLight(Flask):
 		# call divide if threshold has been reached
 		if self.state['aspects']['request_count'] > THRESHOLD_VALUE:
 			self.state = self.divide(1)
+			f = open("logs.txt", "a")
+			f.write(time.time(), str(self.port))
+			f.close()
 			self.state['aspects']['request_count']=0
 
 

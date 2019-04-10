@@ -7,9 +7,8 @@ STATE = {
 	'inactive_siblings' : ['http://127.0.0.1:5001/'],
 	'parents'			: ['http://127.0.0.1:6000/'],
 	'children'			: ['http://127.0.0.1:4000/'],
-	'aspects'			: {
-							'port':5001
-						}
+	'aspects'			: {'request_count'	:0},
+	'port'				: PORT
 }
 
 app = TrafficLight(__name__, PORT, STATE, SPEED_LIMIT)

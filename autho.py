@@ -1,18 +1,17 @@
 from flask import Flask
 import requests
 
-counter = Value('i', 0)
 app = Flask(__name__)
 
 PORT = 6000
 
 ACK = "ACK"
 
-@app.route('/recv_data', methods=['POST','GET'])
+@app.route('/recv_data')
 def recv_data():
 	return ACK
 
-@app.route('/service_coordination/divide', methods=['POST','GET'])
+@app.route('/service_coordination/notify_divide')
 def divide_request():
 	return ACK
 

@@ -82,8 +82,6 @@ class TrafficLight(Flask):
 								params={'json':json.dumps(payload)})
 			if not ret:
 				print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
-
-		return self.state	
 		
 	@register_route('/recv_data/')
 	def recv_data(self):
@@ -94,9 +92,9 @@ class TrafficLight(Flask):
 
 		# call divide if threshold has been reached
 		if self.state['aspects']['request_count'] > THRESHOLD_VALUE:
-			self.state = self.divide(1)
+			self.divide(1)
 			f = open("logs.txt", "a")
-			f.write(time.time(), str(self.port))
+			f.write(str(time.time()))
 			f.close()
 			self.state['aspects']['request_count']=0
 

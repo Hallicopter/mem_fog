@@ -7,7 +7,7 @@ PORT = 6000
 
 ACK = "ACK"
 
-@app.route('/recv_data')
+@app.route('/recv_data/')
 def recv_data():
 	return ACK
 

@@ -59,7 +59,7 @@ class TrafficLight(Flask):
 		"""
 			Execute the divide operation is of our coordination model
 		"""
-		
+
 		# keeps track of number of messages sent
 		no_of_messages 		= 0
 
@@ -67,18 +67,22 @@ class TrafficLight(Flask):
 		siblings_to_add 	= []
 		for sib in self.state['inactive_siblings'][:number_of_additions]:
 			siblings_to_add.append(sib)
+			# update state json
+			self.state['inactive_siblings'].remove(sib)
+			self.state['active_siblings'].append(sib)
 
 		# send activation requests to list of siblings
 		payload = self.state
+		print(payload)
 		for s_url in siblings_to_add:
+			# updates the message count
+			no_of_messages += 1
 			ret = requests.get(s_url + 'service_coordination/notify_divide', 
 								params={'json':json.dumps(payload)})
 			if ret:
-				# updates the message count
-				no_of_messages += 1
-				# update state json
-				self.state['inactive_siblings'].remove(s_url)
-				self.state['active_siblings'].append(s_url)
+				print("Successfully sent divide notification {}".format(s_url))
+			else:
+				print("Couldn't send divide notification to {}".format(s_url))
 
 		children			= self.state['children']
 		parents				= self.state['parents']
@@ -118,8 +122,7 @@ class TrafficLight(Flask):
 		self.state['aspects']['request_count'] += 1
 
 		# call divide if threshold has been reached
-		if (self.state['aspects']['request_count'] > THRESHOLD_VALUE and
-				len(self.state['inactive_siblings']) > 0):
+		if (self.state['aspects']['request_count'] > THRESHOLD_VALUE):
 			time_before_division 					= time.time()
 			no_of_messages 							= self.divide(1)	
 			self.vehicle_set 						= set()
@@ -129,13 +132,9 @@ class TrafficLight(Flask):
 
 			# logs information into file
 			try:
-				# with open(LOG_FILE_NAME, 'w') as csvfile:
-				# 	writer = csv.DictWriter(csvfile, fieldnames = ['elapsed_time', 'no_of_messages'])
-				# 	writer.writeheader()
-				# 	writer.writerow({'elapsed_time':elapsed_time, 'no_of_messages':no_of_messages})
-				row = [elapsed_time, no_of_messages]
-				with open('log.csv', 'a') as csvFile:
-					writer = csv.writer(csvFile)
+				row = [self.port, elapsed_time, no_of_messages]
+				with open('log.csv', 'a') as csv_file:
+					writer = csv.writer(csv_file)
 					writer.writerow(row)
 			except IOError:
 				print("IOError")
@@ -172,12 +171,13 @@ class TrafficLight(Flask):
 		
 		"""
 		payload = json.loads(request.args['json'])
-
 		url = 'http://' + request.remote_addr + ':' + str(payload['port']) + '/'
 
 		if self.state is None:
 			# load the state from the present serving membrane
-			self.state = payload
+			self.state 			= payload
+			self.state['port'] 	= self.port
+			self.state['aspects']['request_count'] = 0
 		else:
 			# update states according to the sender type
 			if url in self.state['parents']:
@@ -185,7 +185,8 @@ class TrafficLight(Flask):
 			elif url in self.state['children']:
 				self.state['children'] = payload['active_siblings']
 			elif url in self.state['active_siblings']:
-				self.state = payload
+				self.state 			= payload
+				self.state['port'] 	= self.port
 				self.state['aspects']['request_count'] = 0
 
 		return ACK	

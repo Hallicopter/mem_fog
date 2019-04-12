@@ -7,7 +7,7 @@ import time		# time stamp and sleep
 import json
 
 EXP_TIME 	= 60 # seconds
-SLEEP_TIME 	= 0.5
+SLEEP_TIME 	= 1
 app 		= Flask(__name__)
 PORT 		= 4000
 parents 	= ['http://127.0.0.1:5000/']

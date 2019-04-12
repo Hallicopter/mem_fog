@@ -32,8 +32,9 @@ state = {
 	'parents'			: []
 	'children'			: []
 	'aspects'			: {
-							'port':
+							'request_count':
 						}
+	'port'				: 
 }
 
 """
@@ -53,10 +54,6 @@ class TrafficLight(Flask):
 			partial_fn = partial(fn, self)
 			partial_fn.__name__ = fn.__name__
 			self.route(route)(partial_fn)
-
-		with open(LOG_FILE_NAME, mode='w') as csv_file:
-			fieldnames 		= ['elapsed_time', 'no_of_messages']
-			self.writer		= csv.DictWriter(csv_file, fieldnames=fieldnames)
 
 	def divide(self, number_of_additions):
 		"""
@@ -121,7 +118,8 @@ class TrafficLight(Flask):
 		self.state['aspects']['request_count'] += 1
 
 		# call divide if threshold has been reached
-		if self.state['aspects']['request_count'] > THRESHOLD_VALUE:
+		if (self.state['aspects']['request_count'] > THRESHOLD_VALUE and
+				len(self.state['inactive_siblings']) > 0):
 			time_before_division 					= time.time()
 			no_of_messages 							= self.divide(1)	
 			self.vehicle_set 						= set()
@@ -130,8 +128,17 @@ class TrafficLight(Flask):
 			elapsed_time 							= time_after_division - time_before_division
 
 			# logs information into file
-			self.writer.writeheader()
-			self.writer.writerow({'elapsed_time':elapsed_time,'no_of_messages':no_of_messages})
+			try:
+				# with open(LOG_FILE_NAME, 'w') as csvfile:
+				# 	writer = csv.DictWriter(csvfile, fieldnames = ['elapsed_time', 'no_of_messages'])
+				# 	writer.writeheader()
+				# 	writer.writerow({'elapsed_time':elapsed_time, 'no_of_messages':no_of_messages})
+				row = [elapsed_time, no_of_messages]
+				with open('log.csv', 'a') as csvFile:
+					writer = csv.writer(csvFile)
+					writer.writerow(row)
+			except IOError:
+				print("IOError")
 
 		payload = json.loads(request.args['json'])
 		self.vehicle_set.add(payload['id'])
@@ -168,13 +175,17 @@ class TrafficLight(Flask):
 
 		url = 'http://' + request.remote_addr + ':' + str(payload['port']) + '/'
 
-		# update states according to the sender type
-		if url in self.state['parents']:
-			self.state['parents'] = payload['active_siblings']
-		elif url in self.state['children']:
-			self.state['children'] = payload['active_siblings']
-		elif url in self.state['active_siblings']:
+		if self.state is None:
+			# load the state from the present serving membrane
 			self.state = payload
-			self.state['aspects']['request_count'] = 0
+		else:
+			# update states according to the sender type
+			if url in self.state['parents']:
+				self.state['parents'] = payload['active_siblings']
+			elif url in self.state['children']:
+				self.state['children'] = payload['active_siblings']
+			elif url in self.state['active_siblings']:
+				self.state = payload
+				self.state['aspects']['request_count'] = 0
 
 		return ACK	

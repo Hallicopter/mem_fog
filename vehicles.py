@@ -6,6 +6,7 @@ import requests # send http requests
 import time		# time stamp and sleep
 import json
 
+EXP_TIME 	= 60 # seconds
 SLEEP_TIME 	= 0.5
 app 		= Flask(__name__)
 PORT 		= 4000
@@ -36,7 +37,7 @@ class Vehicle:
 
 @app.route('/simulate_vehicles', methods=['GET','POST'])
 def send_data():
-	for i in range(100):
+	for i in range(EXP_TIME):
 		time.sleep(SLEEP_TIME)
 		for j in range(int(request.data)):
 			# rand_vehicle_id = random.randint(0, int(request.data)-1) 

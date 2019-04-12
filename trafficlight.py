@@ -122,7 +122,8 @@ class TrafficLight(Flask):
 		self.state['aspects']['request_count'] += 1
 
 		# call divide if threshold has been reached
-		if (self.state['aspects']['request_count'] > THRESHOLD_VALUE):
+		if (self.state['aspects']['request_count'] > THRESHOLD_VALUE and
+				len(self.state['inactive_siblings'])):
 			time_before_division 					= time.time()
 			no_of_messages 							= self.divide(1)	
 			self.vehicle_set 						= set()

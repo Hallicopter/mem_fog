@@ -1,7 +1,7 @@
 from trafficlight import TrafficLight
 import ip_address
 
-PORT 		= 5000
+PORT 		= 5001
 SPEED_LIMIT = 60 
 STATE = {
 	'active_siblings' 	: [ip_address.IP_T1],

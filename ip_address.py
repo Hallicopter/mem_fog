@@ -1,6 +1,6 @@
 # ip address repo
 
-IP_VEHICLE 	= "http://172.16.58.79:4000/"
+IP_VEHICLE 	= "http://172.16.58.55:4000/"
 IP_AUTHO 	= "http://172.16.58.79:6000/"
 IP_T1		= "http://172.16.58.51:5001/"
 IP_T2		= "http://172.16.58.37:5002/"

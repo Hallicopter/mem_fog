@@ -6,7 +6,7 @@ import requests # send http requests
 import time		# time stamp and sleep
 import json
 
-EXP_TIME 	= 60 # seconds
+EXP_TIME 	= 120 # seconds
 SLEEP_TIME 	= 1
 app 		= Flask(__name__)
 PORT 		= 4000

@@ -7,7 +7,7 @@ import json
 import time
 import csv							# log data
 
-THRESHOLD_VALUE = 50 		# point at which load balancing is required
+THRESHOLD_VALUE = 150		# point at which load balancing is required
 LOG_FILE_NAME	= "log.csv"
 
 ACK 			= "ACK"
@@ -133,7 +133,7 @@ class TrafficLight(Flask):
 
 			# logs information into file
 			try:
-				row = [self.port, elapsed_time, no_of_messages]
+				row = [self.port, time_before_division, elapsed_time, no_of_messages]
 				with open('log.csv', 'a') as csv_file:
 					writer = csv.writer(csv_file)
 					writer.writerow(row)

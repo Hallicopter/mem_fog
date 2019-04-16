@@ -1,6 +1,6 @@
 from trafficlight import TrafficLight
 
-PORT 		= 5002
+PORT 		= 5000
 SPEED_LIMIT = 60 
 STATE 		= None
 

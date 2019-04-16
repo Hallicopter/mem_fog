@@ -5,12 +5,13 @@ import random	# generate random data
 import requests # send http requests
 import time		# time stamp and sleep
 import json
+import ip_address
 
 EXP_TIME 	= 120 # seconds
 SLEEP_TIME 	= 1
 app 		= Flask(__name__)
 PORT 		= 4000
-parents 	= ['http://127.0.0.1:5000/']
+parents 	= [ip_address.IP_T1]
 ACK			= 'ACK'
 
 class Vehicle:

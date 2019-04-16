@@ -7,7 +7,7 @@ import json
 import time
 import csv							# log data
 
-THRESHOLD_VALUE = 150		# point at which load balancing is required
+THRESHOLD_VALUE = 300		# point at which load balancing is required
 LOG_FILE_NAME	= "log.csv"
 
 ACK 			= "ACK"

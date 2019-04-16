@@ -1,16 +1,21 @@
 from trafficlight import TrafficLight
+import ip_address
 
 PORT 		= 5000
 SPEED_LIMIT = 60 
 STATE = {
-	'active_siblings' 	: ['http://127.0.0.1:5000/'],
-	'inactive_siblings' : [	'http://127.0.0.1:5001/', 
-							'http://127.0.0.1:5002/', 
-							'http://127.0.0.1:5003/', 
-							'http://127.0.0.1:5004/',
-							'http://127.0.0.1:5005/'],
-	'parents'			: ['http://127.0.0.1:6000/'],
-	'children'			: ['http://127.0.0.1:4000/'],
+	'active_siblings' 	: [ip_address.IP_T1],
+	'inactive_siblings' : [	ip_address.IP_T2, 
+							ip_address.IP_T3, 
+							ip_address.IP_T4, 
+							ip_address.IP_T5, 
+							ip_address.IP_T6, 
+							ip_address.IP_T7, 
+							ip_address.IP_T8, 
+							ip_address.IP_T9, 
+							ip_address.IP_T10],
+	'parents'			: [ip_address.IP_AUTHO],
+	'children'			: [ip_address.IP_VEHICLE],
 	'aspects'			: {'request_count':0},
 	'port'				: PORT
 }

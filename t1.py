@@ -6,7 +6,6 @@ SPEED_LIMIT = 60
 STATE = {
 	'active_siblings' 	: [ip_address.IP_T1],
 	'inactive_siblings' : [	ip_address.IP_T2, 
-							ip_address.IP_T3, 
 							ip_address.IP_T4, 
 							ip_address.IP_T5, 
 							ip_address.IP_T6, 

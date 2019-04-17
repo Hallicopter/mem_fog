@@ -7,7 +7,7 @@ import time		# time stamp and sleep
 import json
 import ip_address
 
-EXP_TIME 	= 120 # seconds
+EXP_TIME 	= 300 # seconds
 SLEEP_TIME 	= 1
 app 		= Flask(__name__)
 PORT 		= 4000

@@ -7,8 +7,8 @@ import time		# time stamp and sleep
 import json
 import ip_address
 
-EXP_TIME 	= 300 # seconds
-SLEEP_TIME 	= 0.2
+EXP_TIME 	= 120 # seconds
+SLEEP_TIME 	= 0.1
 app 		= Flask(__name__)
 PORT 		= 4000
 parents 	= [ip_address.IP_T1]
@@ -30,10 +30,10 @@ class Vehicle:
 		ret 			= requests.get(parents[parent_index] + 'recv_data/', 
 							params={'json':json.dumps(payload)})
 		
-		if ret:
-			print("Vehicle {} successfully sent data to {}".format(self.id, parents[parent_index]))
-		else:
-			print("Vehicle {} counldn't send data to {}".format(self.id, parents[parent_index]))
+		# if ret:
+		# 	print("Vehicle {} successfully sent data to {}".format(self.id, parents[parent_index]))
+		# else:
+		# 	print("Vehicle {} counldn't send data to {}".format(self.id, parents[parent_index]))
 
 
 @app.route('/simulate_vehicles', methods=['GET','POST'])

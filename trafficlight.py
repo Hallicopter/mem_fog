@@ -7,7 +7,7 @@ import json
 import time
 import csv							# log data
 
-THRESHOLD_VALUE = 300		# point at which load balancing is required
+THRESHOLD_VALUE = 200		# point at which load balancing is required
 LOG_FILE_NAME	= "log.csv"
 
 ACK 			= "ACK"
@@ -73,16 +73,15 @@ class TrafficLight(Flask):
 
 		# send activation requests to list of siblings
 		payload = self.state
-		print(payload)
 		for s_url in siblings_to_add:
 			# updates the message count
 			no_of_messages += 1
 			ret = requests.get(s_url + 'service_coordination/notify_divide', 
 								params={'json':json.dumps(payload)})
-			if ret:
-				print("Successfully sent divide notification {}".format(s_url))
-			else:
-				print("Couldn't send divide notification to {}".format(s_url))
+			# if ret:
+			# 	print("Successfully sent divide notification {}".format(s_url))
+			# else:
+			# 	print("Couldn't send divide notification to {}".format(s_url))
 
 		children			= self.state['children']
 		parents				= self.state['parents']
@@ -94,22 +93,22 @@ class TrafficLight(Flask):
 		for url in parents:
 			ret = requests.get(url + 'service_coordination/notify_divide', 
 								params={'json':json.dumps(payload)})
-			if not ret:
-				print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
-			else:
-				# updates the message count
-				no_of_messages += 1
+			# if not ret:
+			# 	print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
+			# else:
+			# 	# updates the message count
+			# 	no_of_messages += 1
 
 		# notify the divide operation to children
 		for url in children:
 			for id in self.vehicle_set:
 				ret = requests.get(url + 'service_coordination/notify_divide',
 									params={'json':json.dumps(payload)})
-				if not ret:
-					print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
-				else:
-					# updates the message count
-					no_of_messages += 1
+				# if not ret:
+				# 	print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
+				# else:
+				# 	# updates the message count
+				# 	no_of_messages += 1
 
 		return no_of_messages
 
@@ -145,22 +144,22 @@ class TrafficLight(Flask):
 
 		# if vehicle is speeding, notify the authorities
 		if payload['speed'] > self.speed_limit:
-			print("Speed of {} is too fast".format(payload['speed']))
+			# print("Speed of {} is too fast".format(payload['speed']))
 
 			# select a random parent out of the list and send the data to it
 			parent_index	= random.randint(0, len(self.state['parents'])-1)
 			ret 			= requests.get(self.state['parents'][parent_index]+'recv_data/', 
 												params={'json':json.dumps(payload)})
-			if ret:
-				print("Data about vehicle {} successfully sent to {}.".format(payload['id'], 
-						self.state['parents'][parent_index]))
-			else:
-				print("Data about vehicle {} couldn't be sent to {}".format(payload['id'],
-						self.state['parents'][parent_index]))
-		else:
-			print("Good speed of {}".format(payload['speed']))
+			# if ret:
+			# 	print("Data about vehicle {} successfully sent to {}.".format(payload['id'], 
+			# 			self.state['parents'][parent_index]))
+			# else:
+			# 	print("Data about vehicle {} couldn't be sent to {}".format(payload['id'],
+			# 			self.state['parents'][parent_index]))
+		# else:
+		# 	print("Good speed of {}".format(payload['speed']))
 
-		print("Counter: ", str(self.state['aspects']['request_count']))
+		# print("Counter: ", str(self.state['aspects']['request_count']))
 		return ACK
 		
 

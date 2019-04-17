@@ -8,7 +8,7 @@ import json
 import ip_address
 
 EXP_TIME 	= 300 # seconds
-SLEEP_TIME 	= 1
+SLEEP_TIME 	= 0.2
 app 		= Flask(__name__)
 PORT 		= 4000
 parents 	= [ip_address.IP_T1]

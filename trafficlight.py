@@ -7,7 +7,7 @@ import json
 import time
 import csv							# log data
 
-THRESHOLD_VALUE = 200		# point at which load balancing is required
+THRESHOLD_VALUE = 300		# point at which load balancing is required
 LOG_FILE_NAME	= "log.csv"
 
 ACK 			= "ACK"
@@ -78,10 +78,10 @@ class TrafficLight(Flask):
 			no_of_messages += 1
 			ret = requests.get(s_url + 'service_coordination/notify_divide', 
 								params={'json':json.dumps(payload)})
-			# if ret:
-			# 	print("Successfully sent divide notification {}".format(s_url))
-			# else:
-			# 	print("Couldn't send divide notification to {}".format(s_url))
+			if ret:
+				print("Successfully sent divide notification {}".format(s_url))
+			else:
+				print("Couldn't send divide notification to {}".format(s_url))
 
 		children			= self.state['children']
 		parents				= self.state['parents']
@@ -104,11 +104,11 @@ class TrafficLight(Flask):
 			for id in self.vehicle_set:
 				ret = requests.get(url + 'service_coordination/notify_divide',
 									params={'json':json.dumps(payload)})
-				# if not ret:
-				# 	print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
-				# else:
-				# 	# updates the message count
-				# 	no_of_messages += 1
+				if not ret:
+					print("Divide broadcast not sent to {} with error code = {}".format(url,ret))
+				else:
+					# updates the message count
+					no_of_messages += 1
 
 		return no_of_messages
 
@@ -150,16 +150,16 @@ class TrafficLight(Flask):
 			parent_index	= random.randint(0, len(self.state['parents'])-1)
 			ret 			= requests.get(self.state['parents'][parent_index]+'recv_data/', 
 												params={'json':json.dumps(payload)})
-			# if ret:
-			# 	print("Data about vehicle {} successfully sent to {}.".format(payload['id'], 
-			# 			self.state['parents'][parent_index]))
-			# else:
-			# 	print("Data about vehicle {} couldn't be sent to {}".format(payload['id'],
-			# 			self.state['parents'][parent_index]))
-		# else:
-		# 	print("Good speed of {}".format(payload['speed']))
+			if ret:
+				print("Data about vehicle {} successfully sent to {}.".format(payload['id'], 
+						self.state['parents'][parent_index]))
+			else:
+				print("Data about vehicle {} couldn't be sent to {}".format(payload['id'],
+						self.state['parents'][parent_index]))
+		else:
+			print("Good speed of {}".format(payload['speed']))
 
-		# print("Counter: ", str(self.state['aspects']['request_count']))
+		print("Counter: ", str(self.state['aspects']['request_count']))
 		return ACK
 		
 

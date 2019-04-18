@@ -1,6 +1,6 @@
-/__pycache__
+__pycache__/
 /testdirectory
-/.vscode
+.vscode/
 /test
 /production
 log.txt

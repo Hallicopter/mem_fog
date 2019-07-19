@@ -5,3 +5,5 @@
 /production
 log.txt
 log.csv
+*.pyc
+
